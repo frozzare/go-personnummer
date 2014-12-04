@@ -37,6 +37,10 @@ func testDate(century string, year string, month string, day string) bool {
   m, _ := strconv.Atoi(month)
   d, _ := strconv.Atoi(day)
   
+  if (y > time.Now().Year()) {
+    return false
+  }
+
   return !(t.Year() != y  || int(t.Month()) != m || t.Day() != d)
 }
 
@@ -84,7 +88,7 @@ func Test(str interface{}) bool {
   
   if len(century) == 0 {
     yearNow := time.Now().Year()
-    years := [...]int{yearNow - 200, yearNow - 100, yearNow}
+    years := [...]int{yearNow, yearNow - 100, yearNow - 150}
     
     for _, yi := range years {
         ys := strconv.Itoa(yi)
@@ -108,7 +112,7 @@ func Test(str interface{}) bool {
   c, _ := strconv.Atoi(check)
 
   valid := luhn(year + month + day + num) == c && len(check) != 0
-  
+
   if valid && testDate(century, year, month, day) {
     return valid
   }
