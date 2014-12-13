@@ -93,7 +93,7 @@ func Valid(str interface{}) bool {
 		for _, yi := range years {
 			ys := strconv.Itoa(yi)
 
-			if Test(ys[:2] + pr) {
+			if Valid(ys[:2] + pr) {
 				return true
 			}
 		}
