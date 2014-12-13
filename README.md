@@ -20,17 +20,17 @@ import (
 )
 
 func main() {
-	personnummer.Test(6403273813)
+	personnummer.Valid(6403273813)
 	//=> true
 	
-	personnummer.Test("19900101-0017")
+	personnummer.Valid("19900101-0017")
 	//=> true
 	
 	// works with co-ordination numbers
-	personnummer.Test("701063-2391")
+	personnummer.Valid("701063-2391")
 	//=> true
 
-	personnummer.Test("510818-916")
+	personnummer.Valid("510818-916")
 	//=> false
 }
 ```

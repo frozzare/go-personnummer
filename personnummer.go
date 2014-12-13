@@ -58,7 +58,7 @@ func getCoOrdinationDay(day string) string {
 }
 
 // Validate Swedish personal identity numbers.
-func Test(str interface{}) bool {
+func Valid(str interface{}) bool {
 	if reflect.TypeOf(str).Kind() != reflect.Int && reflect.TypeOf(str).Kind() != reflect.String {
 		return false
 	}
