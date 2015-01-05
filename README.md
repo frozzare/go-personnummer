@@ -37,5 +37,4 @@ func main() {
 
 # License
 
-Copyright (c) 2014 Fredrik Forsmo
-Licensed under the MIT license.
+MIT © [Fredrik Forsmo](https://github.com/frozzare)
