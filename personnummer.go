@@ -82,7 +82,6 @@ func Valid(str interface{}) bool {
 	year := match[2]
 	month := match[3]
 	day := match[4]
-	sep := match[5]
 	num := match[6]
 	check := match[7]
 
@@ -103,10 +102,6 @@ func Valid(str interface{}) bool {
 
 	if len(year) == 4 {
 		year = year[2:]
-	}
-
-	if len(sep) == 0 {
-		sep = "-"
 	}
 
 	c, _ := strconv.Atoi(check)
