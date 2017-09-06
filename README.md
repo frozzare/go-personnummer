@@ -1,13 +1,11 @@
-# go-personnummer [![Build Status](https://travis-ci.org/frozzare/go-personnummer.svg?branch=master)](https://travis-ci.org/frozzare/go-personnummer)
+# go-personnummer [![Build Status](https://travis-ci.org/frozzare/go-personnummer.svg?branch=master)](https://travis-ci.org/frozzare/go-personnummer) [![GoDoc](https://godoc.org/github.com/frozzare/go-personnummer?status.svg)](https://godoc.org/github.com/frozzare/go-personnummer) [![Go Report Card](https://goreportcard.com/badge/github.com/frozzare/go-personnummer)](https://goreportcard.com/report/github.com/frozzare/go-personnummer)
 
- Validate Swedish personal identity numbers.
-
- View the [docs](http://godoc.org/github.com/frozzare/go-personnummer).
+ Validate Swedish social security numbers.
 
 ## Installation
 
 ```
-$ go get github.com/frozzare/go-personnummer
+$ go get -u github.com/frozzare/go-personnummer
 ```
 
 ## Example
@@ -35,6 +33,6 @@ func main() {
 }
 ```
 
-# License
+## License
 
 MIT © [Fredrik Forsmo](https://github.com/frozzare)
