@@ -12,6 +12,8 @@ func TestPersonnummerWithControlDigit(t *testing.T) {
 	assert.True(t, Valid("19900101-0017"))
 	assert.True(t, Valid("19130401+2931"))
 	assert.True(t, Valid("196408233234"))
+	assert.True(t, Valid("0001010107"))
+	assert.True(t, Valid("000101-0107"))
 }
 
 func TestPersonnummerWithoutControlDigit(t *testing.T) {
