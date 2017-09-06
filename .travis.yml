@@ -1,10 +1,9 @@
 language: go
+
 go:
- - 1.8
- - 1.9
- - tip
+  - 1.8
+  - 1.9
+  - tip
 
 script:
- - go get -d -v ./...
- - go get github.com/frozzare/go-assert
- - go test -v ./...
+  - go test -v ./...
