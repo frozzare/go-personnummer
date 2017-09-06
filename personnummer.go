@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// The Luhn algorithm.
+// luhn will test if the given string is a valid luhn string.
 func luhn(str string) int {
 	sum := 0
 
@@ -25,7 +25,7 @@ func luhn(str string) int {
 	return int(math.Ceil(float64(sum)/10)*10 - float64(sum))
 }
 
-// Test date if lunh is true
+// testDate will test if date is valid or not.
 func testDate(century string, year string, month string, day string) bool {
 	t, err := time.Parse("01/02/2006", month+"/"+day+"/"+century+year)
 
@@ -44,7 +44,7 @@ func testDate(century string, year string, month string, day string) bool {
 	return !(t.Year() != y || int(t.Month()) != m || t.Day() != d)
 }
 
-// Get co-ordination number day
+// getCoOrdinationDay will return co-ordination day.
 func getCoOrdinationDay(day string) string {
 	d, _ := strconv.Atoi(day)
 	d -= 60
@@ -57,7 +57,7 @@ func getCoOrdinationDay(day string) string {
 	return day
 }
 
-// Validate Swedish personal identity numbers.
+// Valid will validate Swedish social security numbers.
 func Valid(str interface{}) bool {
 	if reflect.TypeOf(str).Kind() != reflect.Int && reflect.TypeOf(str).Kind() != reflect.String {
 		return false
