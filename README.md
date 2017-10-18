@@ -35,4 +35,4 @@ func main() {
 
 ## License
 
-MIT © [Fredrik Forsmo](https://github.com/frozzare)
+MIT
