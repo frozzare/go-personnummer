@@ -5,7 +5,7 @@
 ## Installation
 
 ```
-$ go get -u github.com/personnummer/go
+go get -u github.com/personnummer/go
 ```
 
 ## Example
