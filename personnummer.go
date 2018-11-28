@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+var (
+	re = regexp.MustCompile(`^(\d{2}){0,1}(\d{2})(\d{2})(\d{2})([\-|\+]{0,1})?(\d{3})(\d{0,1})$`)
+)
+
 // luhn will test if the given string is a valid luhn string.
 func luhn(str string) int {
 	sum := 0
@@ -71,7 +75,6 @@ func Valid(str interface{}) bool {
 		pr = str.(string)
 	}
 
-	re, _ := regexp.Compile(`^(\d{2}){0,1}(\d{2})(\d{2})(\d{2})([\-|\+]{0,1})?(\d{3})(\d{0,1})$`)
 	match := re.FindStringSubmatch(pr)
 
 	if len(match) == 0 {
