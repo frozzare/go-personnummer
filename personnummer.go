@@ -34,7 +34,7 @@ func ValidString(in string) bool {
 			return false
 		}
 
-		dateBytes := append(cleanNumber[2:6], getCoOrdinationDay(cleanNumber[6:8])...)
+		dateBytes := append(cleanNumber[:6], getCoOrdinationDay(cleanNumber[6:8])...)
 		return validateTime(dateBytes)
 	case lengthWithoutCentury:
 		if !luhn(cleanNumber) {
@@ -48,7 +48,7 @@ func ValidString(in string) bool {
 	}
 }
 
-var monthDays = map[byte]byte{
+var monthDays = map[int]int{
 	1:  31,
 	3:  31,
 	4:  30,
@@ -64,10 +64,10 @@ var monthDays = map[byte]byte{
 
 // input time without centry.
 func validateTime(time []byte) bool {
-	date := charsToDigit(time[4:6])
-	month := charsToDigit(time[2:4])
+	length := len(time)
 
-	year := charsToDigit(time[0:2])
+	date := charsToDigit(time[length-2 : length])
+	month := charsToDigit(time[length-4 : length-2])
 
 	if month != 2 {
 		days, ok := monthDays[month]
@@ -77,7 +77,11 @@ func validateTime(time []byte) bool {
 		return date <= days
 	}
 
-	if year%4 == 0 {
+	year := charsToDigit(time[:length-4])
+
+	leapYear := year%4 == 0 && year%100 != 0 || year%400 == 0
+
+	if leapYear {
 		return date <= 29
 	}
 	return date <= 28
@@ -124,20 +128,26 @@ func getCoOrdinationDay(day []byte) []byte {
 	d -= 60
 
 	if d < 10 {
-		return []byte{'0', d + '0'}
+		return []byte{'0', byte(d) + '0'}
 	}
 
 	return []byte{
-		d/10 + '0',
-		d%10 + '0',
+		byte(d)/10 + '0',
+		byte(d)%10 + '0',
 	}
 }
 
-// charsToDigit converts char bytes to the digit
+// charsToDigit converts char bytes to a digit
 // example: ['1', '1'] => 11
-func charsToDigit(chars []byte) byte {
-	if len(chars) == 1 {
-		return chars[0] - '0'
+func charsToDigit(chars []byte) int {
+	l := len(chars)
+	r := 0
+	for i, c := range chars {
+		p := int((c - '0'))
+		for j := 0; j < l-i-1; j++ {
+			p *= 10
+		}
+		r += p
 	}
-	return (chars[0]-'0')*10 + chars[1] - '0'
+	return r
 }

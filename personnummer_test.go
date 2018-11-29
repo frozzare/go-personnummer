@@ -46,6 +46,13 @@ func TestPersonnummerWithWrongPersonnummerOrTypes(t *testing.T) {
 	assert.False(t, Valid("9909193776"))
 }
 
+func TestLeapYear(t *testing.T) {
+	assert.True(t, Valid("20000229-0005"))  // Divisible by 400
+	assert.False(t, Valid("19000229-0005")) // Divisible by 100
+	assert.True(t, Valid("20080229-0007"))  // Divisible by 4
+	assert.False(t, Valid("20090229-0006")) // Not divisible by
+}
+
 func TestCoOrdinationNumbers(t *testing.T) {
 	assert.True(t, Valid("701063-2391"))
 	assert.True(t, Valid("640883-3231"))
