@@ -55,3 +55,9 @@ func TestWrongCoOrdinationNumbers(t *testing.T) {
 	assert.False(t, Valid("900161-0017"))
 	assert.False(t, Valid("640893-3231"))
 }
+
+func BenchmarkValid(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Valid("19900101-0017")
+	}
+}
