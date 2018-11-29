@@ -61,3 +61,9 @@ func BenchmarkValid(b *testing.B) {
 		Valid("19900101-0017")
 	}
 }
+
+func BenchmarkValidString(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ValidString("19900101-0017")
+	}
+}
