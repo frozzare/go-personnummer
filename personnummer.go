@@ -1,121 +1,153 @@
 package personnummer
 
-import (
-	"math"
-	"reflect"
-	"regexp"
-	"strconv"
-	"time"
+import "fmt"
+
+const (
+	lengthWithoutCentury = 10
+	lengthWithCentury    = 12
 )
 
-var (
-	re = regexp.MustCompile(`^(\d{2}){0,1}(\d{2})(\d{2})(\d{2})([\-|\+]{0,1})?(\d{3})(\d{0,1})$`)
-)
-
-// luhn will test if the given string is a valid luhn string.
-func luhn(str string) int {
-	sum := 0
-
-	for i, r := range str {
-		c := string(r)
-		v, _ := strconv.Atoi(c)
-		v *= 2 - (i % 2)
-		if v > 9 {
-			v -= 9
+// ValidateStrings validate Swedish social security numbers.
+func ValidString(in string) bool {
+	cleanNumber := make([]byte, 0, len(in))
+	for _, c := range in {
+		if c == '+' {
+			continue
 		}
-		sum += v
+		if c == '-' {
+			continue
+		}
+
+		if c > '9' {
+			return false
+		}
+		if c < '0' {
+			return false
+		}
+
+		cleanNumber = append(cleanNumber, byte(c))
 	}
 
-	return int(math.Ceil(float64(sum)/10)*10 - float64(sum))
-}
+	switch len(cleanNumber) {
+	case lengthWithCentury:
+		if !luhn(cleanNumber[2:]) {
+			return false
+		}
 
-// testDate will test if date is valid or not.
-func testDate(century string, year string, month string, day string) bool {
-	t, err := time.Parse("01/02/2006", month+"/"+day+"/"+century+year)
+		dateBytes := append(cleanNumber[:6], getCoOrdinationDay(cleanNumber[6:8])...)
+		return validateTime(dateBytes)
+	case lengthWithoutCentury:
+		if !luhn(cleanNumber) {
+			return false
+		}
 
-	if err != nil {
+		dateBytes := append(cleanNumber[:4], getCoOrdinationDay(cleanNumber[4:6])...)
+		return validateTime(dateBytes)
+	default:
 		return false
 	}
-
-	y, _ := strconv.Atoi(century + year)
-	m, _ := strconv.Atoi(month)
-	d, _ := strconv.Atoi(day)
-
-	if y > time.Now().Year() {
-		return false
-	}
-
-	return !(t.Year() != y || int(t.Month()) != m || t.Day() != d)
 }
 
-// getCoOrdinationDay will return co-ordination day.
-func getCoOrdinationDay(day string) string {
-	d, _ := strconv.Atoi(day)
-	d -= 60
-	day = strconv.Itoa(d)
+var monthDays = map[int]int{
+	1:  31,
+	3:  31,
+	4:  30,
+	5:  31,
+	6:  30,
+	7:  31,
+	8:  31,
+	9:  30,
+	10: 31,
+	11: 30,
+	12: 31,
+}
 
-	if d < 10 {
-		day = "0" + day
+// input time without centry.
+func validateTime(time []byte) bool {
+	length := len(time)
+
+	date := charsToDigit(time[length-2 : length])
+	month := charsToDigit(time[length-4 : length-2])
+
+	if month != 2 {
+		days, ok := monthDays[month]
+		if !ok {
+			return false
+		}
+		return date <= days
 	}
 
-	return day
+	year := charsToDigit(time[:length-4])
+
+	leapYear := year%4 == 0 && year%100 != 0 || year%400 == 0
+
+	if leapYear {
+		return date <= 29
+	}
+	return date <= 28
 }
 
 // Valid will validate Swedish social security numbers.
-func Valid(str interface{}) bool {
-	if reflect.TypeOf(str).Kind() != reflect.Int && reflect.TypeOf(str).Kind() != reflect.String {
+func Valid(i interface{}) bool {
+	switch v := i.(type) {
+	case int, int32, int64, uint, uint32, uint64:
+		return ValidString(fmt.Sprint(v))
+	case string:
+		return ValidString(v)
+	default:
 		return false
 	}
+}
 
-	pr := ""
+var rule3 = [...]int{0, 2, 4, 6, 8, 1, 3, 5, 7, 9}
 
-	if reflect.TypeOf(str).Kind() == reflect.Int {
-		pr = strconv.Itoa(str.(int))
-	} else {
-		pr = str.(string)
-	}
+// luhn will test if the given string is a valid luhn string.
+func luhn(s []byte) bool {
+	odd := len(s) & 1
 
-	match := re.FindStringSubmatch(pr)
+	var sum int
 
-	if len(match) == 0 {
-		return false
-	}
-
-	century := match[1]
-	year := match[2]
-	month := match[3]
-	day := match[4]
-	num := match[6]
-	check := match[7]
-
-	if len(century) == 0 {
-		yearNow := time.Now().Year()
-		years := [...]int{yearNow, yearNow - 100, yearNow - 150}
-
-		for _, yi := range years {
-			ys := strconv.Itoa(yi)
-
-			if Valid(ys[:2] + pr) {
-				return true
-			}
+	for i, c := range s {
+		if i&1 == odd {
+			sum += rule3[c-'0']
+		} else {
+			sum += int(c - '0')
 		}
-
-		return false
 	}
 
-	if len(year) == 4 {
-		year = year[2:]
+	return sum%10 == 0
+}
+
+// getCoOrdinationDay will return co-ordination day.
+func getCoOrdinationDay(day []byte) []byte {
+	d := charsToDigit(day)
+	if d < 60 {
+		return day
 	}
 
-	c, _ := strconv.Atoi(check)
+	d -= 60
 
-	valid := luhn(year+month+day+num) == c && len(check) != 0
-
-	if valid && testDate(century, year, month, day) {
-		return valid
+	if d < 10 {
+		return []byte{'0', byte(d) + '0'}
 	}
 
-	day = getCoOrdinationDay(day)
+	return []byte{
+		byte(d)/10 + '0',
+		byte(d)%10 + '0',
+	}
+}
 
-	return valid && testDate(century, year, month, day)
+// charsToDigit converts char bytes to a digit
+// example: ['1', '1'] => 11
+func charsToDigit(chars []byte) int {
+	l := len(chars)
+	r := 0
+	for i, c := range chars {
+		p := int((c - '0'))
+		for j := 0; j < l-i-1; j++ {
+			p *= 10
+		}
+		r += p
+	}
+	return r
 }
