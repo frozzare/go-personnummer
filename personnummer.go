@@ -7,7 +7,7 @@ const (
 	lengthWithCentury    = 12
 )
 
-// ValidateStrings validate Swedish social security numbers.
+// ValidString validate Swedish social security numbers.
 func ValidString(in string) bool {
 	cleanNumber := make([]byte, 0, len(in))
 	for _, c := range in {
